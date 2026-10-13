@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#49352d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8F%B4%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Uma aventura de estudos com quizzes, tesouros e conquistas.">
+  <title>Baú do Capitão</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Bibliotecas gratuitas para leitura de documentos.
+       Precisam de internet para carregar. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Página inicial">
+        <span class="brand-icon">🏴‍☠️</span>
+        <span>
+          <strong>Baú do Capitão</strong>
+          <small>Conhecimento é o maior tesouro!</small>
+        </span>
+      </a>
+
+      <div class="player-wallet">
+        <div class="wallet-item">
+          <span aria-hidden="true">🪙</span>
+          <strong id="coin-balance">0</strong>
+          <span class="wallet-label">moedas</span>
+        </div>
+        <div class="wallet-item">
+          <span aria-hidden="true">⭐</span>
+          <strong id="player-xp">0</strong>
+          <span class="wallet-label">XP</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- INÍCIO -->
+      <section class="page active" id="inicio">
+        <div class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">⚓ SUA PRÓXIMA AVENTURA COMEÇA AQUI</span>
+            <h1>Olá, <span id="player-title">Capitão</span>!</h1>
+            <p>
+              Prepare os mapas, reúna seus documentos e transforme
+              seus estudos em uma jornada cheia de descobertas.
+            </p>
+            <button class="button primary" data-go="documentos">
+              Abrir meu baú <span aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-sparkle">✦</div>
+            <div class="hero-island">🏝️</div>
+            <div class="hero-chest">🧰</div>
+            <div class="hero-coin">🪙</div>
+            <div class="hero-compass">🧭</div>
+          </div>
+        </div>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">SEU DIÁRIO DE BORDO</span>
+              <h2>Como está sua aventura?</h2>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span class="stat-icon">📚</span>
+              <span class="stat-label">Quizzes concluídos</span>
+              <strong id="stat-quizzes">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-icon">🎯</span>
+              <span class="stat-label">Respostas certas</span>
+              <strong id="stat-correct">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-icon">🏆</span>
+              <span class="stat-label">Conquistas</span>
+              <strong id="stat-achievements">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-icon">🗺️</span>
+              <span class="stat-label">Documentos</span>
+              <strong id="stat-documents">0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">CONTINUE EXPLORANDO</span>
+              <h2>Escolha seu próximo destino</h2>
+            </div>
+          </div>
+
+          <div class="destination-grid">
+            <button class="destination-card" data-go="documentos">
+              <span class="destination-icon">📜</span>
+              <strong>Baú de documentos</strong>
+              <span>Adicione seus materiais de estudo.</span>
+              <span class="card-link">Explorar →</span>
+            </button>
+
+            <button class="destination-card" data-go="aventura">
+              <span class="destination-icon">🧠</span>
+              <strong>Partir para o quiz</strong>
+              <span>Escolha um documento e teste seus conhecimentos.</span>
+              <span class="card-link">Jogar →</span>
+            </button>
+
+            <button class="destination-card" data-go="conquistas">
+              <span class="destination-icon">🏆</span>
+              <strong>Sala das conquistas</strong>
+              <span>Veja os marcos que você já desbloqueou.</span>
+              <span class="card-link">Descobrir →</span>
+            </button>
+
+            <button class="destination-card" data-go="loja">
+              <span class="destination-icon">🪙</span>
+              <strong>Mercado pirata</strong>
+              <span>Troque moedas por itens e personalizações.</span>
+              <span class="card-link">Visitar →</span>
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <!-- DOCUMENTOS -->
+      <section class="page" id="documentos">
+        <div class="page-heading">
+          <span class="eyebrow">📜 COLEÇÃO DO CAPITÃO</span>
+          <h1>Baú de documentos</h1>
+          <p>Seus materiais serão a fonte das perguntas.</p>
+        </div>
+
+        <div class="panel upload-panel">
+          <div class="upload-icon" aria-hidden="true">🗃️</div>
+          <h2>Adicione um novo tesouro</h2>
+          <p>
+            Selecione PDFs, documentos Word, textos, arquivos Markdown,
+            apresentações ou imagens.
+          </p>
+
+          <label for="upload-subject">Matéria dos novos documentos</label>
+          <select id="upload-subject" class="text-input"></select>
+
+          <label class="button primary file-button" for="document-files">
+            Escolher documentos
+          </label>
+
+          <input
+            id="document-files"
+            type="file"
+            accept=".pdf,.txt,.docx,.md,.pptx,.png,.jpg,.jpeg,.webp"
+            multiple
+            hidden
+          >
+
+          <p class="helper-text">
+            PDF · TXT · DOCX · MD · PPTX · PNG · JPG · WEBP
+          </p>
+
+          <div id="upload-status" class="status-message" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Nova matéria</h2>
+          <p class="helper-text">Organize seus documentos por matéria: Matemática, História, Direito...</p>
+          <div class="subject-form">
+            <select id="new-subject-icon" class="text-input" aria-label="Ícone da matéria">
+              <option>📘</option><option>🧮</option><option>🧪</option><option>🌍</option>
+              <option>⚖️</option><option>💻</option><option>🩺</option><option>🏛️</option>
+              <option>🎨</option><option>📐</option><option>⚙️</option><option>🔬</option>
+              <option>📖</option><option>🗣️</option><option>💰</option><option>🧠</option>
+            </select>
+            <input id="new-subject-name" class="text-input" type="text" maxlength="40" placeholder="Nome da matéria">
+            <button class="button primary" id="add-subject" type="button">Criar</button>
+          </div>
+          <p id="subject-status" class="status-message" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <h2>Seus documentos</h2>
+            <p>Materiais que você adicionou ao baú.</p>
+          </div>
+          <span class="count-pill" id="document-count">0 itens</span>
+        </div>
+
+        <div id="document-list" class="document-list">
+          <div class="empty-state" id="documents-empty">
+            <span>🏝️</span>
+            <h3>Esta ilha ainda está vazia</h3>
+            <p>Adicione um documento para começar sua coleção.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONFIGURAÇÃO DA IA -->
+      <section class="page" id="configuracoes">
+        <div class="page-heading">
+          <span class="eyebrow">🔧 PREPARATIVOS DA EXPEDIÇÃO</span>
+          <h1>Configurações</h1>
+          <p>Configure sua conexão com a inteligência artificial.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <span class="panel-icon">🧠</span>
+            <div>
+              <h2>Inteligência artificial</h2>
+              <p>Conexão direta com a API do Google Gemini.</p>
+            </div>
+          </div>
+
+          <label for="api-key">Sua chave de API</label>
+          <input
+            id="api-key"
+            class="text-input"
+            type="password"
+            placeholder="Cole sua chave aqui"
+            autocomplete="off"
+            spellcheck="false"
+          >
+
+          <p class="helper-text">
+            A chave não deve ser compartilhada nem incluída em backups.
+            Nesta versão, ela será mantida apenas na memória da sessão.
+          </p>
+
+          <label for="ai-model">Modelo de IA</label>
+          <select id="ai-model" class="text-input">
+            <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite — gratuito (recomendado)</option>
+            <option value="gemini-3.6-flash">Gemini 3.6 Flash — gratuito</option>
+            <option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite — gratuito</option>
+          </select>
+
+          <div class="button-row">
+            <button class="button primary" id="save-ai-settings" type="button">
+              Testar e usar esta configuração
+            </button>
+            <button class="button secondary" id="clear-api-key" type="button">
+              Limpar chave
+            </button>
+          </div>
+
+          <p id="ai-status" class="status-message" role="status" aria-live="polite">
+            A IA ainda não foi configurada.
+          </p>
+
+          <a
+            class="external-link"
+            href="https://aistudio.google.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Abrir Google AI Studio ↗
+          </a>
+
+          <p class="helper-text">
+            A disponibilidade dos modelos e seus limites gratuitos podem mudar.
+            Confira as condições antes de utilizar a API.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-heading">
+            <span class="panel-icon">💾</span>
+            <div>
+              <h2>Diário e backups</h2>
+              <p>Proteja seu progresso e leve sua aventura para outro aparelho.</p>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="button primary" id="export-backup">
+              Exportar backup
+            </button>
+
+            <label class="button secondary file-button" for="import-backup">
+              Importar backup
+            </label>
+
+            <input
+              id="import-backup"
+              type="file"
+              accept=".json,application/json"
+              hidden
+            >
+          </div>
+
+          <p class="helper-text">
+            O backup guarda moedas, XP, conquistas, compras e histórico.
+            Os documentos e a chave da API não entram no backup.
+          </p>
+
+          <p id="backup-status" class="status-message" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ESCOLHA DO QUIZ -->
+      <section class="page" id="aventura">
+        <div class="page-heading">
+          <span class="eyebrow">🧭 RUMO AO CONHECIMENTO</span>
+          <h1>Preparar aventura</h1>
+          <p>Escolha o material e personalize seu desafio.</p>
+        </div>
+
+        <div class="panel">
+          <label for="quiz-document">Documento ou matéria de origem</label>
+          <select id="quiz-document" class="text-input">
+            <option value="">Adicione um documento primeiro</option>
+          </select>
+
+          <label for="quiz-quantity">Quantidade de perguntas</label>
+          <select id="quiz-quantity" class="text-input">
+            <option value="5">5 perguntas</option>
+            <option value="10" selected>10 perguntas</option>
+            <option value="15">15 perguntas</option>
+            <option value="20">20 perguntas</option>
+          </select>
+
+          <label for="quiz-type">Tipo de questões</label>
+          <select id="quiz-type" class="text-input">
+            <option value="mixed">Misturar formatos</option>
+            <option value="choice">Múltipla escolha</option>
+            <option value="truefalse">Verdadeiro ou falso</option>
+            <option value="open">Resposta escrita</option>
+            <option value="fill">Complete a lacuna</option>
+          </select>
+
+          <label for="quiz-difficulty">Dificuldade</label>
+          <select id="quiz-difficulty" class="text-input">
+            <option value="auto">Automática pela IA</option>
+            <option value="easy">Fácil</option>
+            <option value="medium">Média</option>
+            <option value="hard">Difícil</option>
+          </select>
+
+          <label for="quiz-focus">Assunto específico (opcional)</label>
+          <input
+            id="quiz-focus"
+            class="text-input"
+            type="text"
+            maxlength="200"
+            placeholder="Ex.: capítulos 3 a 5, fórmulas, datas..."
+          >
+
+          <button class="button primary full-button" id="generate-quiz">
+            ✨ Criar meu desafio
+          </button>
+
+          <p id="generation-status" class="status-message" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- JOGO -->
+      <section class="page" id="jogo">
+        <div class="game-top">
+          <button class="button secondary" id="quit-quiz">← Sair do quiz</button>
+          <span id="game-progress-label">Pergunta 1</span>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="quiz-progress"></div>
+        </div>
+
+        <div class="panel question-panel">
+          <span class="eyebrow" id="question-category">DESAFIO DO CAPITÃO</span>
+          <h1 id="question-text">Sua pergunta aparecerá aqui.</h1>
+
+          <div id="question-hint" class="hint-box hidden">
+            <p id="hint-text"></p>
+          </div>
+
+          <div class="game-tools">
+            <button class="button secondary" id="show-hint">
+              💡 Dica (vale metade dos pontos)
+            </button>
+            <button class="button secondary" id="use-lupa">
+              🔍 Lupa <span id="lupa-count">0</span>
+            </button>
+          </div>
+          <p id="boost-note" class="helper-text hidden">🧪 Poção em dobro ativa: este quiz rende o dobro!</p>
+
+          <div id="answer-area" class="answer-area"></div>
+
+          <div id="answer-feedback" class="answer-feedback hidden" role="status" aria-live="polite"></div>
+
+          <div id="study-slot"></div>
+
+          <div class="button-row">
+            <button class="button primary full-button" id="submit-answer">
+              Confirmar resposta
+            </button>
+            <button class="button primary full-button hidden" id="next-question">
+              Próxima pergunta →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTADO -->
+      <section class="page" id="resultado">
+        <div class="panel result-panel">
+          <div class="result-art">🏆</div>
+          <span class="eyebrow">RELATÓRIO DA EXPEDIÇÃO</span>
+          <h1 id="result-title">Aventura concluída!</h1>
+          <p id="result-message">Você concluiu seu desafio.</p>
+
+          <div class="result-score">
+            <span>Seu resultado</span>
+            <strong id="result-percentage">0%</strong>
+            <span id="result-correct">0 de 0 respostas certas</span>
+          </div>
+
+          <div class="result-rewards">
+            <div>
+              <span>🪙</span>
+              <strong id="result-coins">+0</strong>
+              <small>Moedas ganhas</small>
+            </div>
+            <div>
+              <span>⭐</span>
+              <strong id="result-xp">+0</strong>
+              <small>XP conquistado</small>
+            </div>
+          </div>
+
+          <div id="result-achievements" class="achievement-list"></div>
+
+          <div class="button-row">
+            <button class="button primary" id="review-quiz" data-go="revisao">
+              Revisar respostas
+            </button>
+            <button class="button secondary" data-go="aventura">
+              Novo desafio
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REVISÃO -->
+      <section class="page" id="revisao">
+        <div class="page-heading">
+          <span class="eyebrow">📖 APRENDER COM CADA DESAFIO</span>
+          <h1>Revisão do quiz</h1>
+          <p>Confira suas respostas, as explicações e onde estudar mais.</p>
+        </div>
+
+        <div id="review-list" class="review-list"></div>
+
+        <button class="button primary" data-go="aventura">
+          Voltar às aventuras
+        </button>
+      </section>
+
+      <!-- CONQUISTAS -->
+      <section class="page" id="conquistas">
+        <div class="page-heading">
+          <span class="eyebrow">🏆 MARCOS DA JORNADA</span>
+          <h1>Sala das conquistas</h1>
+          <p>Cada passo conta na sua jornada de aprendizado.</p>
+        </div>
+
+        <div class="panel achievement-summary">
+          <span>🏅</span>
+          <div>
+            <strong id="achievement-count">0 conquistas desbloqueadas</strong>
+            <p>Continue aprendendo para descobrir todas.</p>
+          </div>
+        </div>
+
+        <div class="chip-row" id="achievement-filters" role="group" aria-label="Filtrar conquistas">
+          <button class="chip active" data-filter="all" type="button">Todas</button>
+          <button class="chip" data-filter="unlocked" type="button">Desbloqueadas</button>
+          <button class="chip" data-filter="locked" type="button">Em andamento</button>
+        </div>
+
+        <div id="achievement-grid" class="achievement-grid"></div>
+      </section>
+
+      <!-- LOJA -->
+      <section class="page" id="loja">
+        <div class="page-heading">
+          <span class="eyebrow">🪙 MERCADO DA ILHA</span>
+          <h1>Mercado pirata</h1>
+          <p>Use suas moedas para personalizar sua aventura.</p>
+        </div>
+
+        <div class="shop-wallet">
+          <span>Seu tesouro disponível</span>
+          <strong>🪙 <span id="shop-coins">0</span></strong>
+        </div>
+
+        <div id="shop-grid" class="shop-sections"></div>
+        <p id="shop-status" class="status-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <!-- HISTÓRICO -->
+      <section class="page" id="historico">
+        <div class="page-heading">
+          <span class="eyebrow">📔 MEMÓRIAS DA VIAGEM</span>
+          <h1>Histórico de aventuras</h1>
+          <p>Veja os desafios que já concluiu.</p>
+        </div>
+
+        <div id="history-list" class="history-list"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" data-go="inicio">
+        <span>🏠</span><small>Início</small>
+      </button>
+      <button class="nav-item" data-go="documentos">
+        <span>📜</span><small>Baú</small>
+      </button>
+      <button class="nav-item" data-go="aventura">
+        <span>🧭</span><small>Quiz</small>
+      </button>
+      <button class="nav-item" data-go="conquistas">
+        <span>🏆</span><small>Conquistas</small>
+      </button>
+      <button class="nav-item" data-go="loja">
+        <span>🪙</span><small>Loja</small>
+      </button>
+    </nav>
+
+    <footer class="app-footer">
+      <p>Feito de conhecimento, coragem e um pouquinho de magia. ✨</p>
+      <button class="text-button" data-go="historico">Histórico</button>
+      <button class="text-button" data-go="configuracoes">Configurações</button>
+    </footer>
+
+  </div>
+
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <script src="storage.js"></script>
+  <script src="documents.js"></script>
+  <script src="catalog.js"></script>
+  <script src="ai.js"></script>
+  <script src="quiz.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
